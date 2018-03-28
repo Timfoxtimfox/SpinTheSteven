@@ -55,7 +55,7 @@ export default class App extends React.Component {
     return (
         <View style={styles.container}>
           <Text style={styles.header}>SPIN THE STEVEN!</Text>
-          <TouchableWithout`Feedback onPress={(e) => this.clickCat(e)}>
+          <TouchableWithoutFeedback onPress={(e) => this.clickCat(e)}>
             <Animated.Image
                style={{ transform: [{ rotate: rotateData }] }}
                source={require('./imageFile/stevenUniverse.png')}
