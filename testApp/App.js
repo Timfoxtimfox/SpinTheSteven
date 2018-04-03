@@ -9,22 +9,22 @@ export default class App extends React.Component {
     this.state = {
       someStuff: "Here we go!",
       isRotate: true,
-      spinSpeed: 1,
-      image: './imageFile/stevenUniverse.png'
+      duration: 10000,
+      image: './imageFile/stevenUniverse.png',
     }
   }
 
   StartImageRotateFunction() {
     this.RotateValueHolder.setValue(0);
-
-    Animated.timing(
+    this.state.animator = Animated.timing(
       this.RotateValueHolder,
       {
         toValue: 1,
-        duration: 2800,
+        duration: this.state.duration,
         easing: Easing.linear
       }
-    ).start(() => this.StartImageRotateFunction())
+    )
+    this.state.animator.start(() => this.StartImageRotateFunction())
   }
 
   componentDidMount() {
@@ -33,22 +33,26 @@ export default class App extends React.Component {
 
   clickCat(e) {
     e.preventDefault();
-    if( this.state.spinSpeed === 1) {
-      this.StartImageRotateFunction();
+
+    if(this.state.running) {
       this.setState({
-        spinSpeed: 1.1
+        someStuff: "WHEEEEEEEEEE",
+        duration: this.state.duration/ 2
+
       })
+      this.state.animator.duration = this.state.duration;
     } else {
       this.setState({
-         someStuff: "WHEEEEEEEEEE",
-         spinSpeed: this.state.spinSpeed / 2
+        running: true,
+        duration: 5000
       })
+      this.StartImageRotateFunction()
     }
   }
 
   render() {
     const rotateData = this.RotateValueHolder.interpolate({
-      inputRange: [0,this.state.spinSpeed],
+      inputRange: [0,1],
       outputRange: ["0 deg", "360 deg"]
     })
 
@@ -61,7 +65,7 @@ export default class App extends React.Component {
                source={require('./imageFile/stevenUniverse.png')}
              />
          </TouchableWithoutFeedback>
-           <Text onPress={(e) => this.clickCat(e)}>{this.state.someStuff}</Text>
+           <Text style={styles.header} onPress={(e) => this.clickCat(e)}>{this.state.someStuff}</Text>
         </View>
     );
   }
@@ -74,4 +78,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  header: {
+    fontSize: 50,
+  }
 });
