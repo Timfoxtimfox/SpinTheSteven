@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { StyleSheet, Text, View, Image, Animated, Easing, Button, TouchableWithoutFeedback } from 'react-native';
 
@@ -9,41 +8,67 @@ export default class App extends React.Component {
     this.state = {
       someStuff: "Here we go!",
       isRotate: true,
-      spinSpeed: 1,
-      image: './imageFile/stevenUniverse.png'
+      spinSpeed: 1.1,
+      imageOfSteven: require('./imageFile/stevenUniverse.png'),
+      dizzyCounter: 0
     }
   }
 
   StartImageRotateFunction() {
     this.RotateValueHolder.setValue(0);
-
     Animated.timing(
       this.RotateValueHolder,
       {
         toValue: 1,
-        duration: 2800,
+        duration: 3000,
         easing: Easing.linear
       }
     ).start(() => this.StartImageRotateFunction())
+
   }
 
   componentDidMount() {
-
+    this.StartImageRotateFunction();
   }
 
   clickCat(e) {
     e.preventDefault();
-    if( this.state.spinSpeed === 1) {
-      this.StartImageRotateFunction();
+    console.log(this.state.spinSpeed);
+    if( this.state.spinSpeed === 1.1 || this.state.spinSpeed === 0) {
       this.setState({
-        spinSpeed: 1.1
+        spinSpeed: 1
       })
+    } else if ( this.state.spinSpeed === 0.10000000000000014 ){
+      this.setState({
+        imageOfSteven: require('./imageFile/dizzySteven.png'),
+        spinSpeed: 0,
+        someStuff: "Ohhhh, i'm really dizzy now...",
+        dizzyCounter: this.state.dizzyCounter + 1
+      });
     } else {
       this.setState({
          someStuff: "WHEEEEEEEEEE",
-         spinSpeed: this.state.spinSpeed / 2
-      })
+         spinSpeed: this.state.spinSpeed - .1
+      });
     }
+    if ( this.state.dizzyCounter === 1) {
+      this.setState({
+        someStuff: "Please no more!!!!"
+      })
+    } else if( this.state.dizzyCounter === 2) {
+      this.setState({
+        someStuff: "Uuuurp... oh man... i don't feel great..."
+      })
+    };
+  }
+
+  resetClick(e) {
+    this.setState({
+      someStuff: "Here we go!",
+      imageOfSteven: require('./imageFile/stevenUniverse.png'),
+      dizzyCounter: 0
+    });
+    this.StartImageRotateFunction();
   }
 
   render() {
@@ -58,10 +83,11 @@ export default class App extends React.Component {
           <TouchableWithoutFeedback onPress={(e) => this.clickCat(e)}>
             <Animated.Image
                style={{ transform: [{ rotate: rotateData }] }}
-               source={require('./imageFile/stevenUniverse.png')}
+               source={this.state.imageOfSteven}
              />
          </TouchableWithoutFeedback>
-           <Text onPress={(e) => this.clickCat(e)}>{this.state.someStuff}</Text>
+           <Text>{this.state.someStuff}</Text>
+           <Text onPress={(e) => this.clickCat(e)} style={styles.reset}>Start Over</Text>
         </View>
     );
   }
@@ -74,4 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  reset: {
+    paddingTop: 20
+  }
 });
