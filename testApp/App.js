@@ -10,8 +10,10 @@ export default class App extends React.Component {
       isRotate: true,
       spinSpeed: 1.1,
       imageOfSteven: require('./imageFile/stevenUniverse.png'),
-      dizzyCounter: 0
+      dizzyCounter: 0,
+      needlePosition: '-90deg'
     }
+    const needleData = this.state.needlePosition;
   }
 
   StartImageRotateFunction() {
@@ -24,7 +26,6 @@ export default class App extends React.Component {
         easing: Easing.linear
       }
     ).start(() => this.StartImageRotateFunction())
-
   }
 
   componentDidMount() {
@@ -33,7 +34,7 @@ export default class App extends React.Component {
 
   clickCat(e) {
     e.preventDefault();
-    console.log(this.state.spinSpeed);
+    console.log(this.needleData);
     if( this.state.spinSpeed === 1.1 || this.state.spinSpeed === 0) {
       this.setState({
         spinSpeed: 1
@@ -48,7 +49,8 @@ export default class App extends React.Component {
     } else {
       this.setState({
          someStuff: "WHEEEEEEEEEE",
-         spinSpeed: this.state.spinSpeed - .1
+         spinSpeed: this.state.spinSpeed - .1,
+         // needlePosition: this.state.needlePosition + 15
       });
     }
     if ( this.state.dizzyCounter === 1) {
@@ -66,10 +68,12 @@ export default class App extends React.Component {
     this.setState({
       someStuff: "Here we go!",
       imageOfSteven: require('./imageFile/stevenUniverse.png'),
-      dizzyCounter: 0
+      dizzyCounter: 0,
+      spinSpeed: 1.1
     });
-    this.StartImageRotateFunction();
+    this.render();
   }
+
 
   render() {
     const rotateData = this.RotateValueHolder.interpolate({
@@ -78,29 +82,66 @@ export default class App extends React.Component {
     })
 
     return (
-        <View style={styles.container}>
+      <View style={styles.container1}>
+        <View style={styles.container2}>
           <Text style={styles.header}>SPIN THE STEVEN!</Text>
           <TouchableWithoutFeedback onPress={(e) => this.clickCat(e)}>
-            <Animated.Image
-               style={{ transform: [{ rotate: rotateData }] }}
-               source={this.state.imageOfSteven}
-             />
-         </TouchableWithoutFeedback>
-           <Text>{this.state.someStuff}</Text>
-           <Text onPress={(e) => this.clickCat(e)} style={styles.reset}>Start Over</Text>
+            <Animated.Image style={styles.steven, { transform: [{ rotate: rotateData }] }} source={this.state.imageOfSteven}
+            />
+          </TouchableWithoutFeedback>
+          <Text>{this.state.someStuff}</Text>
+          <Text onPress={(e) => this.resetClick(e)}  style={styles.reset}>Start Over</Text>
         </View>
+        <View style={styles.container3}>
+          <Image source= {require('./imageFile/speedDial.png')} style={styles.dial} />
+        </View>
+        <View style={styles.container4}>
+          <Image source= {require('./imageFile/speedNeedle.png')} style={ styles.needle } />
+        </View>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container1: {
+    display: 'flex',
+    flex: 3,
     backgroundColor: '#f4f142',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 50,
+    overflow: 'visible',
+
+  },
+  container2: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  container3: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  container4: {
+    display: 'flex',
+    justifyContent: 'flex-end'
   },
   reset: {
-    paddingTop: 20
+    display: 'flex',
+    zIndex: 9,
+  },
+  dial: {
+    display: 'flex',
+    zIndex: 3,
+    top: 50,
+    overflow: 'visible',
+  },
+  needle: {
+    display: 'flex',
+    zIndex: 4,
+    top: -160,
+    overflow: 'visible',
+    transform: [{rotate: '-90deg'}]
   }
 });
